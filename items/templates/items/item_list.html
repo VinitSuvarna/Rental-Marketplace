@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Browse All Items - Rental Marketplace{% endblock title %}
+
+{% block content %}
+    <div class="container mx-auto px-6 py-8">
+        <div class="bg-gray-800 rounded-lg p-4 mb-6 flex justify-between items-center shadow-md border border-gray-700">
+            <nav class="text-sm text-gray-400">
+                <a href="{% url 'core:index' %}" class="hover:text-green-400">Home</a>
+                <span class="mx-2">/</span>
+                <span>Browse All Items</span>
+            </nav>
+            <div class="text-sm text-gray-300">
+                {{ results_count }} Results Found
+                {% if selected_category_id %}
+                    {% for category in categories %}
+                        {% if category.pk|stringformat:"s" == selected_category_id %}
+                            <span class="ml-4 px-3 py-1 bg-green-700 text-white rounded-full text-xs font-semibold">{{ category.name }} <a href="{% url 'items:item_list' %}" class="ml-1 text-white hover:text-gray-200 font-bold">&times;</a></span>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-6">
+
+            <aside id="filter-sidebar" class="w-full md:w-1/4 bg-gray-800 p-6 rounded-lg shadow-md md:sticky md:top-24 md:h-fit border border-gray-700">
+                <h3 class="text-xl font-bold text-white mb-6 border-b border-gray-700 pb-4">Filter & Sort</h3>
+
+                <button id="mobile-filter-toggle" class="md:hidden w-full btn-primary py-3 rounded-lg font-semibold mb-6">
+                    <svg class="inline-block w-5 h-5 mr-2 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V19l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                    Show Filters
+                </button>
+
+                <form method="GET" action="{% url 'items:item_list' %}" id="filter-form">
+                    <div class="mb-6 pb-4 border-b border-gray-700">
+                        <h4 class="font-semibold text-white mb-3">Categories</h4>
+                        <ul id="category-filter-list">
+                            <li class="mb-2">
+                                <label class="flex items-center text-gray-300 hover:text-green-400 cursor-pointer">
+                                    <input type="radio" name="category" value="" class="mr-2 rounded-full text-green-500 focus:ring-green-500 bg-gray-700 border-gray-600"
+                                        {% if not selected_category_id %}checked{% endif %}> All Categories
+                                </label>
+                            </li>
+                            {% for category in categories %}
+                                <li class="mb-2">
+                                    <label class="flex items-center text-gray-300 hover:text-green-400 cursor-pointer">
+                                        <input type="radio" name="category" value="{{ category.pk }}"
+                                            class="mr-2 rounded-full text-green-500 focus:ring-green-500 bg-gray-700 border-gray-600"
+                                            {% if selected_category_id|stringformat:"s" == category.pk|stringformat:"s" %}checked{% endif %}>
+                                        {{ category.name }}
+                                    </label>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="mb-6 pb-4 border-b border-gray-700">
+                        <h4 class="font-semibold text-white mb-3">Location</h4>
+                        <input type="text" name="location" placeholder="Enter city or area" class="w-full p-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-400 bg-gray-700 text-gray-200 placeholder-gray-400 mb-3">
+                        <label class="block text-gray-300 text-sm mb-2">Radius (km):</label>
+                        <input type="range" name="radius" min="1" max="100" value="25" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                        <span class="text-xs text-gray-400">25 km</span>
+                    </div>
+
+                    <div class="mb-6 pb-4 border-b border-gray-700">
+                        <h4 class="font-semibold text-white mb-3">Price Range (per day)</h4>
+                        <div class="flex space-x-2 mb-3">
+                            <input type="number" name="min_price" placeholder="Min $" class="w-1/2 p-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-400 bg-gray-700 text-gray-200 placeholder-gray-400">
+                            <input type="number" name="max_price" placeholder="Max $" class="w-1/2 p-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-400 bg-gray-700 text-gray-200 placeholder-gray-400">
+                        </div>
+                    </div>
+
+                    <div class="mb-6 pb-4 border-b border-gray-700">
+                        <h4 class="font-semibold text-white mb-3">Condition</h4>
+                        <ul>
+                            <li class="mb-2"><label class="flex items-center text-gray-300 hover:text-green-400 cursor-pointer"><input type="checkbox" name="condition" value="New" class="mr-2 rounded text-green-500 focus:ring-green-500 bg-gray-700 border-gray-600"> New</label></li>
+                            <li class="mb-2"><label class="flex items-center text-gray-300 hover:text-green-400 cursor-pointer"><input type="checkbox" name="condition" value="Like New" class="mr-2 rounded text-green-500 focus:ring-green-500 bg-gray-700 border-gray-600"> Like New</label></li>
+                            <li class="mb-2"><label class="flex items-center text-gray-300 hover:text-green-400 cursor-pointer"><input type="checkbox" name="condition" value="Good" class="mr-2 rounded text-green-500 focus:ring-green-500 bg-gray-700 border-gray-600"> Good</label></li>
+                            <li class="mb-2"><label class="flex items-center text-gray-300 hover:text-green-400 cursor-pointer"><input type="checkbox" name="condition" value="Fair" class="mr-2 rounded text-green-500 focus:ring-green-500 bg-gray-700 border-gray-600"> Fair</label></li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-6 pb-4 border-b border-gray-700">
+                        <h4 class="font-semibold text-white mb-3">Availability</h4>
+                        <input type="date" name="start_date" class="w-full p-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-400 bg-gray-700 text-gray-200 placeholder-gray-400 mb-2">
+                        <input type="date" name="end_date" class="w-full p-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-400 bg-gray-700 text-gray-200 placeholder-gray-400">
+                    </div>
+
+                    <button type="submit" class="w-full btn-primary py-3 rounded-lg font-semibold shadow-md">
+                        Apply Filters
+                    </button>
+                </form>
+            </aside>
+
+            <div class="flex-1">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-white">Available Items</h2>
+                    <div class="relative inline-block text-left">
+                        <label for="sort-by" class="sr-only">Sort by</label>
+                        <select id="sort-by" class="block appearance-none w-full bg-gray-700 border border-gray-600 text-gray-200 py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 transition duration-200">
+                            <option>Sort by: Relevance</option>
+                            <option>Price: Low to High</option>
+                            <option>Price: High to Low</option>
+                            <option>Newest Listings</option>
+                            <option>Rating (Highest)</option>
+                            <option>Distance (Closest)</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 6.757 7.586 5.343 9z"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {% for item in items %}
+                    <a href="{% url 'items:item_detail' pk=item.pk %}" class="block item-card-dark">
+                        {% if item.image %}
+                            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-full h-48 object-cover">
+                        {% else %}
+                            <img src="https://placehold.co/400x300/3A3A3A/FFFFFF?text={{ item.name|urlencode }}" alt="{{ item.name }}" class="w-full h-48 object-cover">
+                        {% endif %}
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-1">{{ item.name }}</h3>
+                            <p class="price font-semibold text-xl mb-2">${{ item.price_daily }}<span class="text-sm text-gray-500">/day</span></p>
+                            <p class="location-text text-sm flex items-center mb-1">
+                                <svg class="w-4 h-4 mr-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657m10.614-10.614L13.414 3.1a1.998 1.998 0 00-2.828 0L6.343 6.343m10.614 10.614l-4.243 4.243m-4.243-4.243l-4.243 4.243m8.486-8.486l4.243 4.243m-4.243-4.243L6.343 6.343m10.614 10.614l-4.243-4.243m-4.243 4.243L6.343 6.343"></path></svg>
+                                {{ item.location }}
+                            </p>
+                            <div class="review-text flex items-center text-sm">
+                                ⭐ 0.0 (0 reviews)
+                            </div>
+                        </div>
+                    </a>
+                    {% empty %}
+                        <p class="col-span-full text-center text-gray-400 text-lg py-12">No items found matching your criteria.</p>
+                    {% endfor %}
+                </div>
+
+                <div class="flex justify-center items-center space-x-2 mt-8">
+                    <button class="px-4 py-2 text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 transition duration-200">Previous</button>
+                    <button class="px-4 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 transition duration-200">1</button>
+                    <button class="px-4 py-2 text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 transition duration-200">2</button>
+                    <button class="px-4 py-2 text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 transition duration-200">3</button>
+                    <span class="text-gray-400">...</span>
+                    <button class="px-4 py-2 text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 transition duration-200">10</button>
+                    <button class="px-4 py-2 text-gray-300 bg-gray-700 rounded-lg hover:bg-gray-600 transition duration-200">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // **NOTE:** The JavaScript for immediate form submission on radio change has been REMOVED.
+            // Filtering is now handled by the form submission button.
+
+            // Mobile filter toggle functionality (keep this)
+            document.querySelector('#mobile-filter-toggle').addEventListener('click', function() {
+                var sidebar = document.querySelector('#filter-sidebar');
+                // Toggle sidebar visibility and positioning for mobile
+                sidebar.classList.toggle('hidden');
+                sidebar.classList.toggle('fixed');
+                sidebar.classList.toggle('inset-0');
+                sidebar.classList.toggle('z-40');
+                sidebar.classList.toggle('overflow-y-auto');
+                
+                // Create or remove backdrop
+                var backdrop = document.getElementById('mobile-filter-backdrop');
+
+                if (sidebar.classList.contains('hidden')) {
+                    if (backdrop) backdrop.remove();
+                } else {
+                    if (!backdrop) {
+                        backdrop = document.createElement('div');
+                        backdrop.classList.add('fixed', 'inset-0', 'bg-black', 'bg-opacity-50', 'z-30', 'md:hidden');
+                        backdrop.id = 'mobile-filter-backdrop';
+                        document.body.appendChild(backdrop);
+                    }
+
+                    // Close sidebar when backdrop is clicked
+                    backdrop.addEventListener('click', function() {
+                        sidebar.classList.add('hidden');
+                        sidebar.classList.remove('fixed', 'inset-0', 'z-40', 'overflow-y-auto');
+                        backdrop.remove();
+                    });
+                }
+            });
+
+            // For desktop, ensure the sidebar is visible if hidden by mobile toggle
+            window.addEventListener('resize', function() {
+                var sidebar = document.querySelector('#filter-sidebar');
+                if (window.innerWidth >= 768 && sidebar.classList.contains('hidden')) {
+                    sidebar.classList.remove('hidden');
+                    // Ensure fixed classes are also removed if desktop view
+                    sidebar.classList.remove('fixed', 'inset-0', 'z-40', 'overflow-y-auto');
+                    var backdrop = document.getElementById('mobile-filter-backdrop');
+                    if (backdrop) backdrop.remove();
+                }
+            });
+        });
+    </script>
+{% endblock content %}

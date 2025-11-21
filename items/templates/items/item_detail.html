@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ item.name }} - Rental Marketplace{% endblock title %}
+
+{% block content %}
+    <div class="container mx-auto px-6 py-8">
+        <!-- Breadcrumbs -->
+        <div class="bg-gray-800 rounded-lg p-4 mb-6 flex items-center shadow-md border border-gray-700">
+            <nav class="text-sm text-gray-400">
+                <a href="{% url 'core:index' %}" class="hover:text-green-400">Home</a>
+                <span class="mx-2">/</span>
+                <a href="{% url 'items:item_list' %}" class="hover:text-green-400">Browse Items</a>
+                <span class="mx-2">/</span>
+                <span>{{ item.name }}</span>
+            </nav>
+        </div>
+
+        <!-- Main Content Area: Two-Column Layout -->
+        <div class="flex flex-col md:flex-row gap-8 lg:gap-12">
+
+            <!-- Left Column: Product Information -->
+            <div class="w-full md:w-3/5 lg:w-2/3 bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-2">{{ item.name }}</h1>
+                <div class="flex items-center text-gray-400 mb-4">
+                    <span class="text-yellow-500 mr-1">⭐⭐⭐⭐⭐</span> 0.0 (0 reviews) {# Placeholder for dynamic reviews #}
+                    <span class="mx-3 text-gray-600">|</span>
+                    <svg class="w-5 h-5 mr-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657m10.614-10.614L13.414 3.1a1.998 1.998 0 00-2.828 0L6.343 6.343m10.614 10.614l-4.243 4.243m-4.243-4.243l-4.243 4.243m8.486-8.486l4.243 4.243m-4.243-4.243L6.343 6.343m10.614 10.614l-4.243-4.243m-4.243 4.243L6.343 6.343"></path></svg>
+                    <span class="text-sm">{{ item.location }}</span>
+                </div>
+
+                <!-- Main Image Gallery/Carousel -->
+                <div class="mb-8">
+                    <div class="relative w-full h-64 md:h-80 lg:h-96">
+                        {% if item.image %}
+                            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-full h-full object-cover rounded-lg shadow-lg">
+                        {% else %}
+                            <img src="https://placehold.co/600x400/3A3A3A/FFFFFF?text={{ item.name|urlencode }}" alt="{{ item.name }}" class="w-full h-full object-cover rounded-lg shadow-lg">
+                        {% endif %}
+                    <div class="flex space-x-2 overflow-x-auto pb-2">
+                        <img src="https://placehold.co/100x75/4A4A4A/FFFFFF?text=Img1" alt="Thumbnail 1" class="w-24 h-18 rounded-md border-2 border-green-700 cursor-pointer object-cover">
+                        <img src="https://placehold.co/100x75/4A4A4A/FFFFFF?text=Img2" alt="Thumbnail 2" class="w-24 h-18 rounded-md border-2 border-transparent hover:border-green-700 cursor-pointer object-cover">
+                        <img src="https://placehold.co/100x75/4A4A4A/FFFFFF?text=Img3" alt="Thumbnail 3" class="w-24 h-18 rounded-md border-2 border-transparent hover:border-green-700 cursor-pointer object-cover">
+                        <img src="https://placehold.co/100x75/4A4A4A/FFFFFF?text=Img4" alt="Thumbnail 4" class="w-24 h-18 rounded-md border-2 border-transparent hover:border-green-700 cursor-pointer object-cover">
+                        <!-- More thumbnails -->
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-white mb-3">About This Item</h2>
+                    <p class="text-gray-300 leading-relaxed mb-3">
+                        {{ item.description }}
+                    </p>
+                    <button class="text-green-400 font-semibold mt-2 hover:underline">Show More</button>
+                </div>
+
+                <!-- Specifications/Details (Static for now) -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-white mb-3">Specifications</h2>
+                    <ul class="list-disc list-inside text-gray-300">
+                        <li class="mb-1">Sensor: 45 Megapixel Full-Frame CMOS</li>
+                        <li class="mb-1">Video: 8K DCI Raw up to 30p, 4K up to 120p</li>
+                        <li class="mb-1">Autofocus: Dual Pixel CMOS AF II with 1053 AF zones</li>
+                        <li class="mb-1">Image Stabilization: In-Body Image Stabilization (IBIS) up to 8 stops</li>
+                        <li class="mb-1">Condition: {{ item.condition }}</li> {# Dynamic condition #}
+                    </ul>
+                </div>
+
+                <!-- What's Included (Static for now) -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-white mb-3">What's Included</h2>
+                    <ul class="list-disc list-inside text-gray-300">
+                        <li class="mb-1">Camera Body</li>
+                        <li class="mb-1">Lens (if applicable)</li>
+                        <li class="mb-1">2 x Batteries & Charger</li>
+                        <li class="mb-1">Memory Card</li>
+                        <li class="mb-1">Protective Carrying Case</li>
+                    </ul>
+                </div>
+
+                <!-- Owner Information -->
+                <div class="bg-gray-700 p-6 rounded-lg shadow-inner flex items-center space-x-4 border border-gray-600">
+                    <img src="https://placehold.co/80x80/D1D5DB/1F2937?text=👤" alt="Owner Profile" class="w-20 h-20 rounded-full object-cover border-2 border-green-500">
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Meet the Owner: {{ item.owner.username }}</h2>
+                        <p class="text-gray-400 text-sm">Joined {{ item.owner.date_joined|date:"M Y" }} | 0.0 Rating (0 rentals)</p> {# Placeholder for dynamic owner info #}
+                        <button class="mt-2 text-green-400 font-semibold hover:underline">Contact Owner</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Booking & Action Box -->
+            <div class="w-full md:w-2/5 lg:w-1/3 md:sticky md:top-24 md:h-fit bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+                <div class="text-center mb-6">
+                    <p class="text-gray-400 text-lg">Price</p>
+                    <p class="text-4xl font-extrabold text-green-400">${{ item.price_daily }}<span class="text-xl text-gray-500">/day</span></p>
+                    <div class="flex justify-center space-x-4 mt-3">
+                        <button class="px-4 py-2 bg-green-700 text-white font-medium rounded-lg hover:bg-green-800 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500">Daily</button>
+                        {% if item.price_weekly %}
+                        <button class="px-4 py-2 bg-gray-700 text-gray-200 font-medium rounded-lg hover:bg-gray-600 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500">Weekly (${{ item.price_weekly }})</button>
+                        {% endif %}
+                        {% if item.price_hourly %}
+                        <button class="px-4 py-2 bg-gray-700 text-gray-200 font-medium rounded-lg hover:bg-gray-600 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500">Hourly (${{ item.price_hourly }})</button>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h4 class="text-md font-semibold text-white mb-2">Select Rental Dates</h4>
+                    <input type="date" class="w-full p-3 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-400 bg-gray-700 text-gray-200 placeholder-gray-400 mb-3" placeholder="Start Date">
+                    <input type="date" class="w-full p-3 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-400 bg-gray-700 text-gray-200 placeholder-gray-400" placeholder="End Date">
+                    <p class="text-sm text-gray-500 mt-2">Item available for selected dates.</p>
+                </div>
+
+                <div class="mb-6">
+                    <h4 class="text-md font-semibold text-white mb-2">Quantity</h4>
+                    <select class="w-full p-3 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-400 bg-gray-700 text-gray-200">
+                        {# Corrected loop for stock_quantity #}
+                        {% if item.stock_quantity > 0 %}
+                            {% for i in ""|ljust:item.stock_quantity %}
+                                <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="0">0 (Out of stock)</option>
+                        {% endif %}
+                    </select>
+                    <p class="text-sm text-gray-500 mt-2">{{ item.stock_quantity }} items available in stock.</p>
+                </div>
+
+                <div class="border-t border-gray-700 pt-6 mt-6">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-lg text-gray-300">Rental Fee (2 days)</span>
+                        <span class="text-lg font-semibold text-white">$70.00</span> {# Placeholder #}
+                    </div>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-lg text-gray-300">Service Fee</span>
+                        <span class="text-lg font-semibold text-white">$5.00</span> {# Placeholder #}
+                    </div>
+                    <div class="flex justify-between items-center border-t border-gray-700 pt-4">
+                        <span class="text-xl font-bold text-white">Total</span>
+                        <span class="text-xl font-bold text-green-400">$75.00</span> {# Placeholder #}
+                    </div>
+                </div>
+
+                <button class="w-full btn-primary py-4 rounded-lg font-bold text-lg mt-8 shadow-xl">
+                    Request to Book
+                </button>
+                <p class="text-center text-gray-500 text-xs mt-3">You won't be charged yet.</p>
+
+                <div class="flex items-center justify-center space-x-4 mt-6 text-gray-400">
+                    <span class="flex items-center text-sm"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.001 12.001 0 002.928 12c0 3.072 1.205 5.72 3.237 7.553L12 21.085l5.835-1.532c2.032-1.833 3.237-4.481 3.237-7.553a12.001 12.001 0 00-2.382-6.06z"></path></svg> Secure Payments</span>
+                    <span class="flex items-center text-sm"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 0A3.988 3.988 0 0115 11a4 4 0 01-4 4c-1.076 0-2.071-.345-2.828-.96L3.536 18.364m1.414 1.414L8.096 16.904M9.004 10H10v.004M10 12.004H9v-.004m4.996-2.004H15v.004m-2.004 2.004H13v.004"></path></svg> Verified Owners</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <section class="mt-12 py-8 bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+            <h2 class="text-3xl font-bold text-white mb-6">Customer Reviews (0)</h2> {# Placeholder #}
+            <div class="flex items-center mb-6">
+                <span class="text-yellow-500 text-4xl mr-3">⭐⭐⭐⭐⭐</span>
+                <span class="text-4xl font-bold text-white">0.0</span>
+                <span class="text-gray-400 ml-2">out of 5</span>
+            </div>
+
+            <!-- Review Breakdown Bars (Placeholder) -->
+            <div class="mb-8">
+                <div class="flex items-center mb-2">
+                    <span class="text-sm font-medium w-12 text-gray-300">5 Stars</span>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5 mx-4">
+                        <div class="bg-green-500 h-2.5 rounded-full" style="width: 0%;"></div> {# Placeholder width #}
+                    </div>
+                    <span class="text-sm text-gray-400">0%</span>
+                </div>
+                <div class="flex items-center mb-2">
+                    <span class="text-sm font-medium w-12 text-gray-300">4 Stars</span>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5 mx-4">
+                        <div class="bg-green-500 h-2.5 rounded-full" style="width: 0%;"></div>
+                    </div>
+                    <span class="text-sm text-gray-400">0%</span>
+                </div>
+                <div class="flex items-center mb-2">
+                    <span class="text-sm font-medium w-12 text-gray-300">3 Stars</span>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5 mx-4">
+                        <div class="bg-green-500 h-2.5 rounded-full" style="width: 0%;"></div>
+                    </div>
+                    <span class="text-sm text-gray-400">0%</span>
+                </div>
+                <div class="flex items-center mb-2">
+                    <span class="text-sm font-medium w-12 text-gray-300">2 Stars</span>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5 mx-4">
+                        <div class="bg-green-500 h-2.5 rounded-full" style="width: 0%;"></div>
+                    </div>
+                    <span class="text-sm text-gray-400">0%</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-sm font-medium w-12 text-gray-300">1 Star</span>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5 mx-4">
+                        <div class="bg-green-500 h-2.5 rounded-full" style="width: 0%;"></div>
+                    </div>
+                    <span class="text-sm text-gray-400">0%</span>
+                </div>
+            </div>
+
+            <!-- Individual Reviews (Placeholder) -->
+            <div class="space-y-8">
+                <!-- Review 1 -->
+                <div class="border-t border-gray-700 pt-8">
+                    <div class="flex items-center mb-3">
+                        <img src="https://placehold.co/40x40/9CA3AF/374151?text=U" alt="User Avatar" class="w-10 h-10 rounded-full mr-3">
+                        <div>
+                            <h4 class="font-semibold text-white">Sarah M.</h4>
+                            <span class="text-yellow-500 text-sm">⭐⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">"Absolutely loved renting this camera! It was in pristine condition, and John was super helpful with the pickup and return. Captured amazing photos on my trip. Highly recommend!"</p>
+                    <p class="text-gray-500 text-sm mt-2">Reviewed on July 10, 2025</p>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="border-t border-gray-700 pt-8">
+                    <div class="flex items-center mb-3">
+                        <img src="https://placehold.co/40x40/A78BFA/FFFFFF?text=J" alt="User Avatar" class="w-10 h-10 rounded-full mr-3">
+                        <div>
+                            <h4 class="font-semibold text-white">James L.</h4>
+                            <span class="text-yellow-500 text-sm">⭐⭐⭐⭐</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">"Great camera, worked perfectly. Only minor issue was the charger cable was a bit short. Otherwise, a fantastic experience and well worth the rental price!"</p>
+                    <p class="text-gray-500 text-sm mt-2">Reviewed on July 01, 2025</p>
+                </div>
+
+                <button class="w-full btn-secondary-dark py-3 rounded-lg font-semibold mt-8">
+                    Load More Reviews
+                </button>
+                <button class="w-full btn-primary py-3 rounded-lg font-semibold mt-4">
+                    Write a Review
+                </button>
+            </div>
+        </section>
+
+        <!-- Related Items / More from This Owner Section (Placeholder) -->
+        <section class="mt-12 py-8 bg-gray-900 p-6 rounded-lg shadow-md border border-gray-700">
+            <h2 class="text-3xl font-bold text-white mb-6 text-center">More from {{ item.owner.username }}</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Item Card Placeholder (Similar to Homepage/Listing Page) -->
+                <div class="item-card-dark">
+                    <img src="https://placehold.co/400x300/3A3A3A/FFFFFF?text=Drone" alt="DJI Mavic Drone" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-1">DJI Mavic Air 2 Drone</h3>
+                        <p class="price font-semibold text-xl mb-2">$50<span class="text-sm text-gray-500">/day</span></p>
+                        <p class="location-text text-sm flex items-center"><svg class="w-4 h-4 mr-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657m10.614-10.614L13.414 3.1a1.998 1.998 0 00-2.828 0L6.343 6.343m10.614 10.614l-4.243 4.243m-4.243-4.243l-4.243 4.243m8.486-8.486l4.243 4.243m-4.243-4.243L6.343 6.343m10.614 10.614l-4.243-4.243m-4.243 4.243L6.343 6.343"></path></svg> Mumbai, India</p>
+                    </div>
+                </div>
+                <!-- More related items -->
+            </div>
+        </section>
+    </div>
+{% endblock content %}

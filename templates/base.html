@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Rental Marketplace{% endblock title %}</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS for Woodland-like design -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <style>
+        /* Optional: Inline Tailwind config extension if needed for custom colors/fonts */
+        /* For now, we rely on standard Tailwind classes and custom CSS */
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 antialiased min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-gray-800 bg-opacity-80 backdrop-blur-md shadow-lg py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 rounded-b-xl">
+        {# RentSmart Logo/Home Link #}
+        {# Use request.resolver_match.url_name for a more robust check for the homepage #}
+        <a href="{% url 'core:index' %}" class="text-3xl font-extrabold text-white hover:text-green-400 transition duration-300 {% if request.resolver_match.url_name == 'index' %}active-logo-shadow{% endif %}">
+            RentSmart
+        </a>
+        <nav class="hidden md:flex space-x-8">
+            {# Browse Items Link #}
+            <a href="{% url 'items:item_list' %}" class="header-link text-lg font-medium {% if request.resolver_match.url_name == 'item_list' or request.resolver_match.url_name == 'item_detail' %}active-nav-link{% endif %}">Browse Items</a>
+            
+            {# How It Works Link (placeholder) #}
+            <a href="#" class="header-link text-lg font-medium">How It Works</a>
+            
+            {# List an Item Link (Placeholder URL for now) #}
+            <a href="#" class="header-link text-lg font-medium {% if request.path == '/list-an-item/' %}active-nav-link{% endif %}">List an Item</a> 
+            
+            {# Help & FAQ Link (placeholder) #}
+            <a href="#" class="header-link text-lg font-medium">Help & FAQ</a>
+        </nav>
+        <div class="hidden md:flex space-x-4">
+            {% if user.is_authenticated %}
+                {# Show user's name and Logout button if logged in #}
+                <span class="text-gray-300 text-lg font-medium py-2 px-3 rounded-lg">Hello, {{ user.username }}</span>
+                <a href="#" id="logout-button" class="btn-secondary-dark px-4 py-2 rounded-lg text-lg">Logout</a> {# Added ID for JS #}
+            {% else %}
+                {# Show Login and Sign Up buttons if not logged in #}
+                <a href="{% url 'users:login' %}" class="btn-secondary-dark px-4 py-2 rounded-lg text-lg {% if request.resolver_match.url_name == 'login' %}active-nav-link{% endif %}">Login</a>
+                <a href="{% url 'users:signup' %}" class="btn-primary px-4 py-2 rounded-lg text-lg {% if request.resolver_match.url_name == 'signup' %}active-nav-link{% endif %}">Sign Up</a>
+            {% endif %}
+        </div>
+        <!-- Mobile Menu Button -->
+        <button class="md:hidden text-white focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </button>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow">
+        {% block content %}
+        {% endblock content %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 py-12 px-6 md:px-12 mt-auto rounded-t-xl shadow-lg">
+        <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h3 class="text-2xl font-extrabold text-white mb-4">RentSmart</h3>
+                <p class="text-sm leading-relaxed mb-4">Your platform for sustainable sharing and convenient rentals. Rent what you need, share what you have.</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300"><img src="https://placehold.co/24x24/333333/FFFFFF?text=FB" alt="Facebook" class="w-6 h-6"></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300"><img src="https://placehold.co/24x24/333333/FFFFFF?text=IG" alt="Instagram" class="w-6 h-6"></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300"><img src="https://placehold.co/24x24/333333/FFFFFF?text=TW" alt="Twitter" class="w-6 h-6"></a>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-xl font-semibold text-white mb-4">Company</h4>
+                <ul>
+                    <li class="mb-2"><a href="#" class="footer-link hover:text-green-400">About Us</a></li>
+                    <li class="mb-2"><a href="#" class="footer-link hover:text-green-400">Careers</a></li>
+                    <li class="mb-2"><a href="#" class="footer-link hover:text-green-400">Press</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-xl font-semibold text-white mb-4">Support</h4>
+                <ul>
+                    <li class="mb-2"><a href="#" class="footer-link hover:text-green-400">Help Center</a></li>
+                    <li class="mb-2"><a href="#" class="footer-link hover:text-green-400">FAQ</a></li>
+                    <li class="mb-2"><a href="#" class="footer-link hover:text-green-400">Terms of Service</a></li>
+                    <li class="mb-2"><a href="#" class="footer-link hover:text-green-400">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-xl font-semibold text-white mb-4">Explore</h4>
+                <ul>
+                    <li class="mb-2"><a href="#" class="footer-link hover:text-green-400">Electronics</a></li>
+                    <li class="mb-2"><a href="#" class="footer-link hover:text-green-400">Tools</a></li>
+                    <li class="mb-2"><a href="#" class="footer-link hover:text-green-400">Sports Gear</a></li>
+                    <li class="mb-2"><a href="#" class="footer-link hover:text-green-400">Party Supplies</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="text-center text-sm text-gray-500 mt-10 border-t border-gray-700 pt-6">
+            &copy; 2025 RentSmart. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Add event listener for logout confirmation
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutButton = document.getElementById('logout-button');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevent default link behavior
+
+                    // Display a confirmation dialog
+                    const confirmLogout = confirm("Are you sure you want to log out?");
+
+                    if (confirmLogout) {
+                        // If user confirms, redirect to the logout URL
+                        window.location.href = "{% url 'users:logout' %}";
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
