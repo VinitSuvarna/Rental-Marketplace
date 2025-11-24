@@ -150,3 +150,5 @@ SESSION_COOKIE_SECURE = True
 # ---------------------------------------------------------
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+if not DEBUG:
+    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
